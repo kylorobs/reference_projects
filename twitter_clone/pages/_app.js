@@ -6,7 +6,7 @@ function MyApp({ Component, pageProps }) {
     <SessionProvider session={pageProps.session}>
       <Component {...pageProps} />
     </SessionProvider>
-  )
+  );
 }
 
-export default MyApp
+export default MyApp;
