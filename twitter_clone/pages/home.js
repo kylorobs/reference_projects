@@ -17,11 +17,11 @@ export default function Home({ tweets }) {
     return null;
   }
 
-  if (!session) {
+  if (!session || !session.user) {
     router.push('/');
   }
 
-  console.log(tweets);
+  if (!session.user.name) router.push('/setup');
 
   return (
     <>

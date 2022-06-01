@@ -3,7 +3,6 @@ import prisma from '../../lib/prisma';
 
 export default async function handler(req, res) {
   const session = await getSession({ req });
-  console.log('RECEIVED');
 
   if (!session) return res.status(401).json({ message: 'Not logged in' });
 

@@ -1,17 +1,17 @@
 // import Head from 'next/head'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 export default function Home() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
   if (status === 'loading') {
-    return null
+    return null;
   }
 
-  if (session) {
-    router.push('/home')
+  if (session && session.user) {
+    router.push('/home');
   }
-  return <a href='/api/auth/signin'>login</a>
+  return <a href="/api/auth/signin">login</a>;
 }
