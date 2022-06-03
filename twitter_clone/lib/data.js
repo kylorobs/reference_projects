@@ -61,3 +61,19 @@ export const deleteTweet = (id, prisma) => {
     },
   });
 };
+
+export const getReplies = (id, prisma) => {
+  return prisma.tweet.findMany({
+    where: {
+      parent: +id,
+    },
+    orderBy: [
+      {
+        id: 'desc',
+      },
+    ],
+    include: {
+      author: true,
+    },
+  });
+};
