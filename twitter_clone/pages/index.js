@@ -14,9 +14,10 @@ export default function Welcome({ tweets }) {
     return null;
   }
 
-  // if (session && session.user) {
-  //   router.push('/home');
-  // }
+  if (session && session.user) {
+    router.push('/home');
+  }
+
   return (
     <div className="mt-10">
       <Tweets tweets={tweets.slice(0, 3)} />

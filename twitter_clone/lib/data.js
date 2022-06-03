@@ -30,7 +30,7 @@ export const getUserNames = (prisma) => {
 export const getUserTweets = (id, prisma) => {
   return prisma.tweet.findMany({
     where: {
-      authorId: parseInt(id),
+      authorId: id,
     },
     orderBy: [
       {
@@ -57,7 +57,7 @@ export const getTweet = (id, prisma) => {
 export const deleteTweet = (id, prisma) => {
   return prisma.tweet.delete({
     where: {
-      id: parseInt(id),
+      id,
     },
   });
 };

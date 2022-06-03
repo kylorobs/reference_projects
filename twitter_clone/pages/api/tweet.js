@@ -25,4 +25,27 @@ export default async function handler(req, res) {
     });
     return res.end();
   }
+
+  if (req.method === 'DELETE') {
+    const { id } = req.body;
+
+    const tweet = await prisma.tweet.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        author: true,
+      },
+    });
+
+    if (tweet.author.id !== user.id) {
+      res.status(401).end();
+      return;
+    }
+
+    await prisma.tweet.delete({
+      where: { id },
+    });
+    res.status(200).end();
+  }
 }

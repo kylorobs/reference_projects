@@ -13,7 +13,13 @@ export default NextAuth({
 
   database: process.env.DATABASE_URL,
   secret: process.env.SECRET,
-
+  // USE THIS IF YOU WANT TO INCLUDE THE UNQIUE USERID IN THE SESSION, INSTEAD OF USER EMAIL AS IDENITIFER
+  // callbacks: {
+  //   session: async (session) => {
+  //     session.session.user.id = session.user.id;
+  //     return Promise.resolve(session);
+  //   },
+  // },
   session: {
     jwt: true,
     maxAge: 30 * 24 * 60 * 60, // 30 days
