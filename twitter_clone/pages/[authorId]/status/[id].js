@@ -17,10 +17,10 @@ export default function SingleTweet({ tweet, replies }) {
       <Tweet tweet={tweet} />
 
       {session && session.user.email === tweet.author.email && (
-        <div className="flex-1 py-2 m-2 text-center">
+        <div className="flex justify-center text-center">
           <button
             type="button"
-            className="flex items-center w-12 px-3 py-2 mt-1 text-base font-medium leading-6 text-gray-500 rounded-full group hover:bg-color-accent-hover hover:color-accent-hover"
+            className="flex items-center w-12 px-3 py-2 mt-1 text-base font-medium leading-6 text-gray-500 rounded-full group hover:text-red-500  "
             onClick={async () => {
               const res = await fetch('/api/tweet', {
                 body: JSON.stringify({
@@ -44,8 +44,8 @@ export default function SingleTweet({ tweet, replies }) {
           </button>
         </div>
       )}
-      <NewReply tweet={tweet} />
       <Tweets tweets={replies} />
+      <NewReply tweet={tweet} />
     </div>
   );
 }

@@ -36,7 +36,7 @@ export default function Home({ initialTweets }) {
 }
 
 export async function getServerSideProps() {
-  let tweets = await getTweets(prisma, 2);
+  let tweets = await getTweets(prisma, 15);
   // createdAt is a returned by Prisma as a Date object, but getServerSideProps returns data as JSON-encoded, and JSON does not support Date objects.
   // So what we do is, we transform that object into a string, and then back into an object
   tweets = JSON.parse(JSON.stringify(tweets));

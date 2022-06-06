@@ -7,7 +7,7 @@ export default function NewReply({ tweet }) {
 
   return (
     <form
-      className="flex ml-2"
+      className="flex py-8 max-w-3xl m-auto"
       onSubmit={async (e) => {
         e.preventDefault();
         if (!reply) {
@@ -28,7 +28,7 @@ export default function NewReply({ tweet }) {
       }}
     >
       <textarea
-        className="border p-4 w-full text-lg font-medium bg-transparent outline-none color-primary "
+        className="border p-4 w-full text-lg font-medium bg-transparent outline-none "
         rows={1}
         cols={50}
         placeholder="Tweet your reply"
