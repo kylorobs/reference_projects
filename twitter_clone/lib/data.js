@@ -1,4 +1,4 @@
-export const getTweets = (prisma, amount) => {
+export const getTweets = (prisma, amount, cursor) => {
   return prisma.tweet.findMany({
     where: {},
     orderBy: [
@@ -10,6 +10,8 @@ export const getTweets = (prisma, amount) => {
       author: true,
     },
     take: amount,
+    cursor,
+    skip: cursor ? 1 : 0,
   });
 };
 
