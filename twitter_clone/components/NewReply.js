@@ -7,7 +7,7 @@ export default function NewReply({ tweet }) {
 
   return (
     <form
-      className="flex py-8 max-w-3xl m-auto"
+      className="flex py-8 max-w-3xl m-auto "
       onSubmit={async (e) => {
         e.preventDefault();
         if (!reply) {
