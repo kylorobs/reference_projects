@@ -16,7 +16,7 @@ export default NextAuth({
   secret: process.env.SECRET,
 
   session: {
-    strategy: 'jwt',
+    strategy: 'database',
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
 
@@ -26,7 +26,7 @@ export default NextAuth({
 
   callbacks: {
     async session({ session, user }) {
-      // session.user.id = user.id;
+      session.user.id = user.id;
       return Promise.resolve(session);
     },
   },
