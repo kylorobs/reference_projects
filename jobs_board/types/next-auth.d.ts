@@ -1,4 +1,5 @@
 import NextAuth from 'next-auth';
+import type { User } from '@prisma/client';
 
 /** Example on how to extend the built-in session types */
 declare module 'next-auth' {
@@ -7,8 +8,6 @@ declare module 'next-auth' {
      */
     interface Session {
         /** This is an example. You can find me in types/next-auth.d.ts */
-        user: {
-            id: number | string;
-        };
+        user: User;
     }
 }
