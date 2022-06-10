@@ -52,3 +52,19 @@ export const getCompanyJobs = async (id: string, prisma: PrismaClient): Promise<
 
     return jobs;
 };
+
+export const getAllJobsPosted = async (userId: string, prisma: PrismaClient): Promise<JobWithAuthor[]> => {
+    const jobs = await prisma.job.findMany({
+        where: { authorId: userId },
+        orderBy: [
+            {
+                id: 'desc',
+            },
+        ],
+        include: {
+            author: true,
+        },
+    });
+
+    return jobs;
+};

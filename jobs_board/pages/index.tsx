@@ -25,7 +25,25 @@ const Home: React.FC<{ jobs: JobWithAuthor[] }> = ({ jobs }) => {
                 <div className="text-center p-4 m-4">
                     <h2 className="mb-10 text-4xl font-bold">Find a job!</h2>
                 </div>
-                <Jobs jobs={jobs} />
+                <div className="flex justify-center">
+                    <Link href="/new">
+                        <button
+                            type="button"
+                            className="border px-8 py-2 mt-5 font-bold rounded-full bg-black text-white border-black "
+                        >
+                            click here to post a new job
+                        </button>
+                    </Link>
+                    <Link href="/dashboard">
+                        <button
+                            type="button"
+                            className="ml-5 border px-8 py-2 mt-5 font-bold rounded-full bg-black text-white border-black "
+                        >
+                            see all the jobs you posted
+                        </button>
+                    </Link>
+                </div>
+                <Jobs jobs={jobs} isDashboard={false} />
             </div>
         </>
     );

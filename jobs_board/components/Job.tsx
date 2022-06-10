@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { JobWithAuthor } from '../lib/data';
 
-const Job: React.FC<{ job: JobWithAuthor }> = ({ job }) => {
+const Job: React.FC<{ job: JobWithAuthor; isDashboard: boolean }> = ({ job, isDashboard }) => {
     return (
         <div className="mb-4 mt-20 pl-16 pr-16">
             <Link href={`/job/${job.id}`}>
@@ -10,6 +10,12 @@ const Job: React.FC<{ job: JobWithAuthor }> = ({ job }) => {
             <h2 className="text-base font-normal mt-3">{job.description}</h2>
             <div className="mt-4">
                 <h4 className="inline">Posted by</h4>
+                {isDashboard && job.published && (
+                    <span className="bg-black text-white uppercase text-sm p-2 mr-5">✅ Published</span>
+                )}
+                {isDashboard && !job.published && (
+                    <span className="bg-black text-white uppercase text-sm p-2 mr-5">❌ Unpublished</span>
+                )}
                 <div className="ml-3 -mt-6 inline">
                     <span>
                         <p>
