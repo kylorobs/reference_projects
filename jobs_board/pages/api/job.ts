@@ -60,6 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return;
     }
 
+    // FOR POST REQUESTS
     const { title, description, location, salary } = req.body as {
         title: string;
         description: string;

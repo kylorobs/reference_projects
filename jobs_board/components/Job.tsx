@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import type { JobWithAuthor } from '../lib/data';
 
 const Job: React.FC<{ job: JobWithAuthor; isDashboard: boolean }> = ({ job, isDashboard }) => {
+    const router = useRouter();
     const togglePublish = async (task: 'publish' | 'unpublish') => {
-        fetch('/api/job', {
+        await fetch('/api/job', {
             body: JSON.stringify({
                 id: job.id,
                 task,
@@ -13,7 +15,7 @@ const Job: React.FC<{ job: JobWithAuthor; isDashboard: boolean }> = ({ job, isDa
             },
             method: 'PUT',
         });
-        router.reload(window.location.pathname);
+        router.reload();
     };
 
     return (
@@ -36,20 +38,20 @@ const Job: React.FC<{ job: JobWithAuthor; isDashboard: boolean }> = ({ job, isDa
                     </span>
                 )}
                 {isDashboard && !job.published && (
-                    <span className="bg-black text-white uppercase text-sm p-2 mr-5">❌ Unpublished</span>
+                    <span
+                        tabIndex={0}
+                        role="button"
+                        onClick={() => togglePublish('publish')}
+                        onKeyUp={() => togglePublish('publish')}
+                        className="bg-black text-white uppercase text-sm p-2 mr-5"
+                    >
+                        ❌ Unpublished
+                    </span>
                 )}
                 <div className="ml-3 -mt-6 inline">
                     <span>
                         <p>
-                            <span
-                                tabIndex={0}
-                                role="button"
-                                onClick={() => togglePublish('publish')}
-                                onKeyUp={() => togglePublish('publish')}
-                                className="text-base font-medium color-primary underline"
-                            >
-                                {job.author.name}
-                            </span>
+                            <span className="text-base font-medium color-primary underline">{job.author.name}</span>
                         </p>
                     </span>
                 </div>
