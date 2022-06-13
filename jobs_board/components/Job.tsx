@@ -2,6 +2,20 @@ import Link from 'next/link';
 import type { JobWithAuthor } from '../lib/data';
 
 const Job: React.FC<{ job: JobWithAuthor; isDashboard: boolean }> = ({ job, isDashboard }) => {
+    const togglePublish = async (task: 'publish' | 'unpublish') => {
+        fetch('/api/job', {
+            body: JSON.stringify({
+                id: job.id,
+                task,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            method: 'PUT',
+        });
+        router.reload(window.location.pathname);
+    };
+
     return (
         <div className="mb-4 mt-20 pl-16 pr-16">
             <Link href={`/job/${job.id}`}>
@@ -11,7 +25,15 @@ const Job: React.FC<{ job: JobWithAuthor; isDashboard: boolean }> = ({ job, isDa
             <div className="mt-4">
                 <h4 className="inline">Posted by</h4>
                 {isDashboard && job.published && (
-                    <span className="bg-black text-white uppercase text-sm p-2 mr-5">✅ Published</span>
+                    <span
+                        tabIndex={0}
+                        role="button"
+                        onClick={() => togglePublish('unpublish')}
+                        onKeyUp={() => togglePublish('unpublish')}
+                        className="bg-black text-white uppercase text-sm p-2 mr-5"
+                    >
+                        ✅ Published
+                    </span>
                 )}
                 {isDashboard && !job.published && (
                     <span className="bg-black text-white uppercase text-sm p-2 mr-5">❌ Unpublished</span>
@@ -19,7 +41,15 @@ const Job: React.FC<{ job: JobWithAuthor; isDashboard: boolean }> = ({ job, isDa
                 <div className="ml-3 -mt-6 inline">
                     <span>
                         <p>
-                            <span className="text-base font-medium color-primary underline">{job.author.name}</span>
+                            <span
+                                tabIndex={0}
+                                role="button"
+                                onClick={() => togglePublish('publish')}
+                                onKeyUp={() => togglePublish('publish')}
+                                className="text-base font-medium color-primary underline"
+                            >
+                                {job.author.name}
+                            </span>
                         </p>
                     </span>
                 </div>
