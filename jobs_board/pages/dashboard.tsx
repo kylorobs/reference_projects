@@ -89,8 +89,7 @@ export default function Dashboard({
 
 export async function getServerSideProps(context: NextPageContext) {
     const session = await getSession(context);
-
-    let user = (await getCompany(session!.user.id, prisma)) as User;
+    let user = session ? await getCompany(session.user.id, prisma) : (null as User | null);
     user = JSON.parse(JSON.stringify(user)) as User;
 
     let jobs: JobWithApplications[] = [];
@@ -102,6 +101,12 @@ export async function getServerSideProps(context: NextPageContext) {
     } else {
         applications = await getUserApplications(user.id, prisma);
         applications = JSON.parse(JSON.stringify(applications)) as ApplicationExtended[];
+    }
+
+    if (!session) {
+        return {
+            props: { jobs },
+        };
     }
 
     return {
