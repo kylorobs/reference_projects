@@ -1,10 +1,11 @@
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
-import { getJob } from '../../lib/data';
+import { getSession } from 'next-auth/react';
+import { getJob, alreadyApplied } from '../../lib/data';
 import type { JobWithAuthor } from '../../lib/data';
 import { prisma } from '../../lib/prisma';
 
-export default function Job({ job }: { job: JobWithAuthor }) {
+export default function Job({ job, applied }: { job: JobWithAuthor; applied: boolean }) {
     return (
         <div className="flex flex-col w-1/2 mx-auto">
             <div className="text-center p-4 m-4">
@@ -21,6 +22,29 @@ export default function Job({ job }: { job: JobWithAuthor }) {
             <div className="mb-4 mt-20">
                 <div className="pl-16 pr-16 -mt-6">
                     <p className="text-base font-normal mt-3">{job.description}</p>
+                    {applied ? (
+                        <div className="mt-20 flex justify-center ">
+                            <Link href="/dashboard">
+                                <button
+                                    type="button"
+                                    className=" border  px-8 py-2 mt-0  font-bold rounded-full bg-black text-white "
+                                >
+                                    You already applied!
+                                </button>
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="mt-20 flex justify-center ">
+                            <Link href={`/job/${job.id}/apply`}>
+                                <button
+                                    type="button"
+                                    className=" border  px-8 py-2 mt-0  font-bold rounded-full bg-black text-white "
+                                >
+                                    Apply to this job
+                                </button>
+                            </Link>
+                        </div>
+                    )}
                     <div className="mt-4">
                         <h4 className="inline">Posted by</h4>
                         <div className="inline">
@@ -44,8 +68,10 @@ export default function Job({ job }: { job: JobWithAuthor }) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+    const session = await getSession(context);
     const id = context.params?.id as string;
     let job = await getJob(id, prisma);
     job = JSON.parse(JSON.stringify(job)) as JobWithAuthor;
-    return { props: { job } };
+    const applied = await alreadyApplied(session!.user.id, id, prisma);
+    return { props: { job, applied } };
 };

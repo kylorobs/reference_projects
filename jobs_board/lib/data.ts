@@ -1,6 +1,7 @@
-import type { Job, PrismaClient, User } from '@prisma/client';
+import type { Job, PrismaClient, User, Application } from '@prisma/client';
 
 export type JobWithAuthor = Job & { author: User };
+export type ApplicationExtended = Application & { author: User; job: Job };
 
 export const getJobs = (prisma: PrismaClient): Promise<JobWithAuthor[]> => {
     return prisma.job.findMany({
@@ -67,4 +68,34 @@ export const getAllJobsPosted = async (userId: string, prisma: PrismaClient): Pr
     });
 
     return jobs;
+};
+
+export const getUserApplications = async (userId: string, prisma: PrismaClient): Promise<ApplicationExtended[]> => {
+    const applications = await prisma.application.findMany({
+        where: {
+            authorId: userId,
+        },
+        orderBy: [
+            {
+                id: 'desc',
+            },
+        ],
+        include: {
+            author: true,
+            job: true,
+        },
+    });
+
+    return applications;
+};
+
+export const alreadyApplied = async (userId: string, jobId: string, prisma: PrismaClient): Promise<boolean> => {
+    const applications = await prisma.application.findMany({
+        where: {
+            authorId: userId,
+            jobId: +jobId,
+        },
+    });
+
+    return applications.length > 0;
 };
