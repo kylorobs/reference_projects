@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+// import { useMutation } from 'react-query';
 
 export default function Setup() {
     const router = useRouter();
     const { data: session, status } = useSession();
     const loading = status === 'loading';
+    // const mut = useMutation()
 
     const [name, setName] = useState('');
 
