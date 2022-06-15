@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-// import { useMutation } from 'react-query';
+import { useMutation } from 'react-query';
+import { setUserName } from '../lib/queries';
 
 export default function Setup() {
     const router = useRouter();
     const { data: session, status } = useSession();
     const loading = status === 'loading';
-    // const mut = useMutation()
+    const { mutateAsync, isError, isLoading } = useMutation(setUserName);
 
     const [name, setName] = useState('');
 
@@ -22,20 +23,14 @@ export default function Setup() {
         router.push('/');
     }
 
+    if (isError) console.log('ERROR');
+
     return (
         <form
             className="mt-10 ml-20"
             onSubmit={async (e) => {
                 e.preventDefault();
-                await fetch('/api/setup', {
-                    body: JSON.stringify({
-                        name,
-                    }),
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    method: 'POST',
-                });
+                await mutateAsync(name);
                 session.user.name = name;
                 router.push('/');
             }}

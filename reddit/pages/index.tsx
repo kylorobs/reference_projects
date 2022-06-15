@@ -22,12 +22,6 @@ export default function Home({ posts }: { posts: PostWithAuthor[] }) {
 
     if (error) console.log(error);
 
-    console.log(data);
-
-    // if (session) {
-    //     router.push('/home');
-    // }
-    console.log('index');
     if (!session || !session.user.name) router.push('/setup');
     return (
         <>
