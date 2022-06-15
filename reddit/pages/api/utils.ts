@@ -7,10 +7,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (req.method !== 'POST') return res.end();
 
     const { task } = req.body as { task: string };
+    console.log(task);
 
     if (task === 'generate_users') {
+        console.log('GENERATING USERS');
         for (let i = 0; i < 10; i++) {
-            prisma.user.create({
+            await prisma.user.create({
                 data: {
                     name: faker.internet.userName().toLowerCase(),
                     email: faker.internet.email(),
@@ -22,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (task === 'generate_subreddits') {
         for (let i = 0; i < 10; i++) {
-            prisma.subreddit.create({
+            await prisma.subreddit.create({
                 data: {
                     name: faker.word.noun().toLowerCase(),
                     description: faker.lorem.paragraph(1).toLowerCase(),
