@@ -22,7 +22,7 @@ export default function Home({ posts }: { posts: PostWithAuthor[] }) {
 
     if (error) console.log(error);
 
-    if (!session || !session.user.name) router.push('/setup');
+    if (session && !session.user.name) router.push('/setup');
     return (
         <>
             <Head>

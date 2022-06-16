@@ -1,4 +1,5 @@
 import moment from 'moment';
+import Link from 'next/link';
 import { PostWithAuthor } from '../lib/data';
 
 const SinglePost = ({ post }: { post: PostWithAuthor }) => {
@@ -7,13 +8,20 @@ const SinglePost = ({ post }: { post: PostWithAuthor }) => {
             <div className="flex flex-shrink-0 pb-0 ">
                 <div className="flex-shrink-0 block group ">
                     <div className="flex items-center text-gray-800">
-                        /r/{post.subredditName} Posted by {post.author.name}{' '}
-                        {moment(new Date(post.createdAt)).fromNow()}
+                        <Link href={`/r/${post.subredditName!}`}>
+                            <a className="mr-2 underline">/r/{post.subredditName}</a>
+                        </Link>
+                        Posted by {post.author.name}
+                        <Link href={`/r/${post.subredditName!}/comments/${post.id}`}>
+                            <a className="mx-2 underline">{moment(new Date(post.createdAt)).fromNow()}</a>
+                        </Link>
                     </div>
                 </div>
             </div>
-            <div className="mt-5">
-                <p className="flex-shrink text-2xl font-bold color-primary width-auto">{post.title}</p>
+            <div className="mt-1">
+                <Link href={`/r/${post.subredditName!}/comments/${post.id}`}>
+                    <a className="flex-shrink text-2xl font-bold color-primary width-auto">{post.title}</a>
+                </Link>
                 <p className="flex-shrink text-base font-normal color-primary width-auto mt-2">{post.content}</p>
             </div>
         </div>
