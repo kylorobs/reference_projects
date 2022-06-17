@@ -1,11 +1,13 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { useMutation } from 'react-query';
 import { PostWithAuthor } from '../lib/data';
 import { createComment } from '../lib/queries';
 
 export default function NewComment({ post }: { post: PostWithAuthor }) {
     const router = useRouter();
     const [content, setContent] = useState('');
+    const { mutateAsync, isError, isLoading } = useMutation(createComment);
 
     return (
         <form
@@ -16,7 +18,7 @@ export default function NewComment({ post }: { post: PostWithAuthor }) {
                     alert('Enter some text in the comment');
                     return;
                 }
-                await createComment(post.id, content);
+                await mutateAsync(post.id, content);
                 setContent('');
             }}
         >
