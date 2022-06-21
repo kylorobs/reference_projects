@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react';
 import { prisma } from '../../lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'POST') {
+    if (req.method !== 'POST' && req.method !== 'GET') {
         return res.status(501).end();
     }
 
@@ -18,6 +18,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     if (!user) return res.status(401).json({ message: 'User not found' });
+
+    if (req.method === 'GET') {
+        const { postId } = req.query;
+        const comments = await prisma.comment.findMany({
+            where: {
+                postId: +postId,
+            },
+            include: {
+                post: true,
+            },
+        });
+        res.json({ data: comments });
+    }
 
     if (req.method === 'POST') {
         const { content, post } = req.body as { content: string; post: number };

@@ -3,13 +3,18 @@ import type { Subreddit as SubredditT } from '@prisma/client';
 import moment from 'moment';
 import Link from 'next/link.js';
 import { useSession } from 'next-auth/react';
-import { getPost, getSubreddit } from '../../../../lib/data';
+import { useQuery } from 'react-query';
+import { getPost, getSubreddit, PostWithAuthorAndComments } from '../../../../lib/data';
 import { prisma } from '../../../../lib/prisma';
-import type { PostWithAuthor } from '../../../../lib/data';
 import NewComment from '../../../../components/NewComment';
+import Comments from '../../../../components/Comments';
+import { fetchPostComments } from '../../../../lib/queries';
 
-export default function Post({ subreddit, post }: { subreddit: SubredditT; post: PostWithAuthor }) {
+export default function Post({ subreddit, post }: { subreddit: SubredditT; post: PostWithAuthorAndComments }) {
     if (!post) return <p className="text-center p-5">Post does not exist 😞</p>;
+    const { isFetching, error, data } = useQuery<Comment[], { error: boolean }>('posts', fetchPostComments, {
+        initialData: post.comments,
+    });
     const { data: session, status } = useSession();
 
     const loading = status === 'loading';
@@ -54,6 +59,7 @@ export default function Post({ subreddit, post }: { subreddit: SubredditT; post:
                     to add a comment
                 </p>
             )}
+            <Comments comments={post.comments} />
         </>
     );
 }
@@ -62,7 +68,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const params = context.params as unknown as { subreddit: string; id: string };
     const subreddit = (await getSubreddit(params.subreddit, prisma)) as SubredditT;
     let post = await getPost(parseInt(params.id), prisma);
-    post = JSON.parse(JSON.stringify(post)) as PostWithAuthor;
+    post = JSON.parse(JSON.stringify(post)) as PostWithAuthorAndComments;
 
     return {
         props: {

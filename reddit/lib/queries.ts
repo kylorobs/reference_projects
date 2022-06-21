@@ -1,8 +1,14 @@
+import type { Comment } from '@prisma/client';
 import { PostWithAuthor } from './data';
 
 export async function fetchPosts(): Promise<PostWithAuthor[]> {
-    console.log('FETCHING');
     const res = (await (await fetch('/api/posts')).json()) as { data?: PostWithAuthor[]; error?: boolean };
+    if (!res.data || res.error) throw new Error('No data!');
+    return res.data;
+}
+
+export async function fetchPostComments(): Promise<Comment[]> {
+    const res = (await (await fetch('/api/comment')).json()) as { data?: Comment[]; error?: boolean };
     if (!res.data || res.error) throw new Error('No data!');
     return res.data;
 }
@@ -20,7 +26,12 @@ export async function setUserName(name: string): Promise<> {
     return res;
 }
 
-export async function createComment(id: number, content: string): Promise<{ name: string }> {
+type Params = {
+    id: number;
+    content: string;
+};
+
+export async function createComment({ id, content }: Params): Promise<Comment> {
     const res = await fetch('/api/comment', {
         body: JSON.stringify({
             post: id,
@@ -31,5 +42,6 @@ export async function createComment(id: number, content: string): Promise<{ name
         },
         method: 'POST',
     });
-    return res;
+    const result = (await res.json()) as Comment;
+    return result;
 }

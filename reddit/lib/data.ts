@@ -1,6 +1,7 @@
-import type { PrismaClient, User, Post, Subreddit } from '@prisma/client';
+import type { PrismaClient, User, Post, Subreddit, Comment } from '@prisma/client';
 
 export type PostWithAuthor = Post & { author: User };
+export type PostWithAuthorAndComments = Post & { author: User } & { comments: Comment[] };
 
 export const getUser = async (id: string, prisma: PrismaClient): Promise<User | null> => {
     return prisma.user.findUnique({
@@ -24,15 +25,18 @@ export const getPosts = async (prisma: PrismaClient): Promise<PostWithAuthor[]> 
     });
 };
 
-export const getPost = async (id: number, prisma: PrismaClient): Promise<PostWithAuthor | null> => {
+export const getPost = async (id: number, prisma: PrismaClient): Promise<PostWithAuthorAndComments | null> => {
     const post = (await prisma.post.findUnique({
         where: {
             id,
         },
         include: {
             author: true,
+            comments: {
+                orderBy: [{ id: 'desc' }],
+            },
         },
-    })) as PostWithAuthor | null;
+    })) as PostWithAuthorAndComments | null;
     return post;
 };
 

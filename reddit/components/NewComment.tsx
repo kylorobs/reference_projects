@@ -7,18 +7,22 @@ import { createComment } from '../lib/queries';
 export default function NewComment({ post }: { post: PostWithAuthor }) {
     const router = useRouter();
     const [content, setContent] = useState('');
-    const { mutateAsync, isError, isLoading } = useMutation(createComment);
+    const { mutate, isError, isLoading } = useMutation(createComment, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['todos', 'list']);
+        },
+    });
 
     return (
         <form
             className="flex flex-col mt-10"
-            onSubmit={async (e) => {
+            onSubmit={(e) => {
                 e.preventDefault();
                 if (!content) {
                     alert('Enter some text in the comment');
                     return;
                 }
-                await mutateAsync(post.id, content);
+                mutate({ id: +post.author.id, content });
                 setContent('');
             }}
         >
