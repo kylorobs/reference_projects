@@ -11,11 +11,16 @@ import Comments from '../../../../components/Comments';
 import { fetchPostComments } from '../../../../lib/queries';
 
 export default function Post({ subreddit, post }: { subreddit: SubredditT; post: PostWithAuthorAndComments }) {
-    if (!post) return <p className="text-center p-5">Post does not exist 😞</p>;
-    const { isFetching, error, data } = useQuery<Comment[], { error: boolean }>('posts', fetchPostComments, {
-        initialData: post.comments,
-    });
+    const { isFetching, error, data } = useQuery(
+        ['comments', { postId: 4 }],
+        () => fetchPostComments({ postId: post.id }),
+        {
+            initialData: post.comments,
+        }
+    );
     const { data: session, status } = useSession();
+
+    if (!post) return <p className="text-center p-5">Post does not exist 😞</p>;
 
     const loading = status === 'loading';
 
@@ -59,7 +64,7 @@ export default function Post({ subreddit, post }: { subreddit: SubredditT; post:
                     to add a comment
                 </p>
             )}
-            <Comments comments={post.comments} />
+            {data && <Comments comments={data} />}
         </>
     );
 }

@@ -7,8 +7,8 @@ export async function fetchPosts(): Promise<PostWithAuthor[]> {
     return res.data;
 }
 
-export async function fetchPostComments(): Promise<Comment[]> {
-    const res = (await (await fetch('/api/comment')).json()) as { data?: Comment[]; error?: boolean };
+export async function fetchPostComments({ postId }: { postId: number }): Promise<Comment[]> {
+    const res = (await (await fetch(`/api/comment?postId=${postId}`)).json()) as { data?: Comment[]; error?: boolean };
     if (!res.data || res.error) throw new Error('No data!');
     return res.data;
 }
@@ -27,15 +27,16 @@ export async function setUserName(name: string): Promise<> {
 }
 
 type Params = {
-    id: number;
+    postId: number;
     content: string;
 };
 
-export async function createComment({ id, content }: Params): Promise<Comment> {
+export async function createComment({ postId, content }: Params): Promise<Comment> {
     const res = await fetch('/api/comment', {
         body: JSON.stringify({
-            post: id,
+            post: postId,
             content,
+            postId,
         }),
         headers: {
             'Content-Type': 'application/json',

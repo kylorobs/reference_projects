@@ -1,15 +1,17 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useMutation } from 'react-query';
+import { useQueryClient, useMutation } from 'react-query';
 import { PostWithAuthor } from '../lib/data';
 import { createComment } from '../lib/queries';
 
 export default function NewComment({ post }: { post: PostWithAuthor }) {
     const router = useRouter();
     const [content, setContent] = useState('');
+    const queryClient = useQueryClient();
+
     const { mutate, isError, isLoading } = useMutation(createComment, {
         onSuccess: () => {
-            queryClient.invalidateQueries(['todos', 'list']);
+            queryClient.invalidateQueries('comments');
         },
     });
 
@@ -22,14 +24,21 @@ export default function NewComment({ post }: { post: PostWithAuthor }) {
                     alert('Enter some text in the comment');
                     return;
                 }
-                mutate({ id: +post.author.id, content });
-                setContent('');
+                mutate(
+                    { postId: +post.id, content },
+                    {
+                        onSuccess: () => {
+                            setContent('');
+                        },
+                    }
+                );
             }}
         >
             <textarea
                 className="border border-gray-700 p-4 w-full text-lg font-medium bg-transparent outline-none color-primary "
                 rows={1}
                 cols={50}
+                value={content}
                 placeholder="Add a comment"
                 onChange={(e) => setContent(e.target.value)}
             />

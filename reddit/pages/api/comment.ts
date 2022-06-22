@@ -25,9 +25,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             where: {
                 postId: +postId,
             },
-            include: {
-                post: true,
-            },
+            orderBy: [
+                {
+                    id: 'desc',
+                },
+            ],
         });
         res.json({ data: comments });
     }
