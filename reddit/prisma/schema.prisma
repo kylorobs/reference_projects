@@ -83,13 +83,16 @@ model Post {
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   content   String
-  createdAt DateTime @default(now())
-  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime  @default(now())
   authorId  String
-  post      Post?    @relation(fields: [postId], references: [id])
   postId    Int?
+  author    User      @relation(fields: [authorId], references: [id])
+  post      Post?     @relation(fields: [postId], references: [id])
+  parentId  Int?
+  parent    Comment?  @relation("ParenComment", fields: [parentId], references: [id])
+  Comment   Comment[] @relation("ParenComment")
 }
 
 model Vote {

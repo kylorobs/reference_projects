@@ -1,5 +1,5 @@
 import type { Comment } from '@prisma/client';
-import { PostWithAuthor } from './data';
+import { CommentExtended, PostWithAuthor, PostWithAuthorAndComments } from './data';
 
 export async function fetchPosts(): Promise<PostWithAuthor[]> {
     const res = (await (await fetch('/api/posts')).json()) as { data?: PostWithAuthor[]; error?: boolean };
@@ -7,8 +7,11 @@ export async function fetchPosts(): Promise<PostWithAuthor[]> {
     return res.data;
 }
 
-export async function fetchPostComments({ postId }: { postId: number }): Promise<Comment[]> {
-    const res = (await (await fetch(`/api/comment?postId=${postId}`)).json()) as { data?: Comment[]; error?: boolean };
+export async function fetchPostWithComments({ postId }: { postId: number }): Promise<PostWithAuthorAndComments> {
+    const res = (await (await fetch(`/api/comment?postId=${postId}`)).json()) as {
+        data?: PostWithAuthorAndComments;
+        error?: boolean;
+    };
     if (!res.data || res.error) throw new Error('No data!');
     return res.data;
 }
@@ -28,14 +31,15 @@ export async function setUserName(name: string): Promise<> {
 
 type Params = {
     postId: number;
+    parentId: number;
     content: string;
 };
 
-export async function createComment({ postId, content }: Params): Promise<Comment> {
+export async function createComment({ postId, content, parentId }: Params): Promise<Comment> {
     const res = await fetch('/api/comment', {
         body: JSON.stringify({
-            post: postId,
             content,
+            parentId,
             postId,
         }),
         headers: {

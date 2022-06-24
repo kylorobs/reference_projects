@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
+import { getPost } from '../../lib/data';
 import { prisma } from '../../lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -21,34 +22,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === 'GET') {
         const { postId } = req.query;
-        const comments = await prisma.comment.findMany({
-            where: {
-                postId: +postId,
-            },
-            orderBy: [
-                {
-                    id: 'desc',
-                },
-            ],
-        });
+        const comments = await getPost(+postId, prisma);
         res.json({ data: comments });
     }
 
     if (req.method === 'POST') {
-        const { content, post } = req.body as { content: string; post: number };
-        const comment = await prisma.comment.create({
-            data: {
-                content,
-                post: {
-                    connect: {
-                        id: post,
-                    },
-                },
-                author: {
-                    connect: { id: user.id },
+        const { content, postId, parentId } = req.body as { content: string; postId: number; parentId: string };
+
+        const data = {
+            content,
+            post: {
+                connect: {
+                    id: +postId,
                 },
             },
-        });
+            author: {
+                connect: { id: user.id },
+            },
+            parent: {},
+        };
+        if (parentId) {
+            data.parent = {
+                connect: {
+                    id: parentId,
+                },
+            };
+        }
+
+        const comment = await prisma.comment.create({ data });
 
         res.json(comment);
     }

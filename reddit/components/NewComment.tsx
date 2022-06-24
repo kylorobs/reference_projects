@@ -1,10 +1,19 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useQueryClient, useMutation } from 'react-query';
+import type { Comment } from '@prisma/client';
 import { PostWithAuthor } from '../lib/data';
 import { createComment } from '../lib/queries';
 
-export default function NewComment({ post }: { post: PostWithAuthor }) {
+export default function NewComment({
+    post,
+    comment,
+    callback,
+}: {
+    post: PostWithAuthor;
+    comment?: Comment;
+    callback?: () => void;
+}) {
     const router = useRouter();
     const [content, setContent] = useState('');
     const queryClient = useQueryClient();
@@ -25,10 +34,11 @@ export default function NewComment({ post }: { post: PostWithAuthor }) {
                     return;
                 }
                 mutate(
-                    { postId: +post.id, content },
+                    { postId: +post.id, parentId: comment?.id, content },
                     {
                         onSuccess: () => {
                             setContent('');
+                            if (callback) callback();
                         },
                     }
                 );
