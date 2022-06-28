@@ -29,8 +29,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
         });
 
-        const videoURL = '<video URL>.mp4';
-        const thumbnailURL = '<image URL>.jpeg';
+        const videoURL = 'https://next-kylo-reddit.s3.ap-south-1.amazonaws.com/SampleVideo_1280x720_2mb.mp4';
+        const thumbnailURL = 'http://placeimg.com/800/450/animals';
 
         const users = await prisma.user.findMany();
 
