@@ -19,3 +19,29 @@ This is a repo containing boiler plate for starting a new NextJS application. It
 ```bash
 npx prisma migrate dev
 ```
+
+
+## Dynamic Prisma Args
+Struggled with correct typings to get this right
+```js
+export const getVideos = async (
+    options: { take?: number },
+    prisma: PrismaClient
+): Promise<(Video & { author: User })[]> => {
+    const data = {
+        where: {},
+        orderBy: [
+            {
+                createdAt: 'desc',
+            },
+        ],
+        include: {
+            author: true,
+        },
+    } as Partial<Prisma.VideoFindManyArgs>;
+
+    if (options.take) data.take = options.take;
+    const res = (await prisma.video.findMany(data)) as (Video & { author: User })[];
+    return res;
+}
+```

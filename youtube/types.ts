@@ -5,4 +5,4 @@ import { getVideos } from './lib/data';
 type ArrElement<ArrType> = ArrType extends readonly (infer ElementType)[] ? ElementType : never;
 
 export type VideoArr = Awaited<ReturnType<typeof getVideos>>;
-export type Video = ArrElement<VideoArr>;
+export type VideoT = ArrElement<VideoArr>;

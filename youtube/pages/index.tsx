@@ -6,6 +6,8 @@ import { getVideos } from '../lib/data';
 import { prisma } from '../lib/prisma';
 import type { VideoArr } from '../types';
 import Videos from '../components/Videos';
+import SideMenu from '../components/SideMenu';
+import NavBar from '../components/NavBar';
 
 export default function Home({ videos }: { videos: VideoArr }) {
     const { data: session, status } = useSession();
@@ -17,18 +19,14 @@ export default function Home({ videos }: { videos: VideoArr }) {
                 <meta name="description" content="A great YouTube Clone" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <header className="h-14 flex pt-5 px-5 pb-2">
-                <div className="text-xl">
-                    <p>YouTube clone</p>
+            <NavBar />
+            <main className="flex dark:bg-slate-800">
+                <SideMenu />
+                <div className="w-5/6">
+                    {videos.length === 0 && <p className="flex justify-center mt-20">No videos found!</p>}
+                    <Videos videos={videos} />
                 </div>
-                <Link href="/api/auth/signin">
-                    <a>login</a>
-                </Link>
-                <div className="grow" />
-            </header>
-
-            {videos.length === 0 && <p className="flex justify-center mt-20">No videos found!</p>}
-            <Videos videos={videos} />
+            </main>
         </div>
     );
 }
