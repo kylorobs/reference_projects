@@ -19,9 +19,9 @@ export default function Home({ videos }: { videos: VideoArr }) {
                 <meta name="description" content="A great YouTube Clone" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <NavBar />
+            <NavBar profileSrc={session?.user.image || (session && 'https://placeimg.com/400/400/nature') || ''} />
             <main className="flex dark:bg-slate-800">
-                <SideMenu />
+                <SideMenu signedIn={!!session} />
                 <div className="w-5/6">
                     {videos.length === 0 && <p className="flex justify-center mt-20">No videos found!</p>}
                     <Videos videos={videos} />

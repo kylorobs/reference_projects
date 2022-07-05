@@ -12,8 +12,10 @@
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.3",
     "aws-sdk": "^2.1162.0",
+    "dayjs": "^1.11.3",
     "flowbite": "^1.4.7",
     "flowbite-react": "^0.0.27",
+    "moment": "^2.29.3",
     "next": "12.1.6",
     "next-auth": "^4.3.4",
     "nodemailer": "^6.7.5",

@@ -1,10 +1,12 @@
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import Head from 'next/head';
 import { getVideo, getVideos } from '../../lib/data';
 import { prisma } from '../../lib/prisma';
 import type { VideoT, VideoArr } from '../../types';
 import Video from '../../components/Video';
+import NavBar from '../../components/NavBar';
 
 const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: false });
 
@@ -13,16 +15,14 @@ export default function SingleVideo({ video, videos }: { video: VideoT; videos: 
 
     return (
         <>
-            <header className="h-14 flex pt-5 px-5 pb-2">
-                <Link href="/">
-                    <a className="underline">Home</a>
-                </Link>
-
-                <div className="grow" />
-            </header>
-
-            <div className="h-screen flex">
-                <div className="flex w-full md:w-2/3 flex-col mb-4 border-t border-r border-b border-3 border-black pl-0 bg-black">
+            <Head>
+                <title>YouTube Clone</title>
+                <meta name="description" content="A great YouTube Clone" />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
+            <NavBar />
+            <div className="h-screen flex dark:bg-slate-800 h-full">
+                <div className="flex w-full flex-col mb-4 border-t border-r border-b border-3 border-black pl-0 bg-gray-900">
                     <div className="relative pt-[60%]">
                         <ReactPlayer
                             className="react-player absolute top-0 left-0"
@@ -37,7 +37,7 @@ export default function SingleVideo({ video, videos }: { video: VideoT; videos: 
                     <div className="px-5 mt-5">
                         <div className="flex ">
                             <div>
-                                <p className="text-2xl font-bold ">{video.title}</p>
+                                <p className="text-2xl font-bold text-white">{video.title}</p>
 
                                 <div className="text-gray-400">{video.views} views · </div>
                             </div>
