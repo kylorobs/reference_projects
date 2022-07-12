@@ -9,7 +9,7 @@ export const getUser = async (id: string, prisma: PrismaClient): Promise<User | 
 };
 
 export const getVideos = async (
-    options: { take?: number },
+    options: { take?: number; userId?: number | string },
     prisma: PrismaClient
 ): Promise<(Video & { author: User })[]> => {
     const data = {
@@ -25,6 +25,7 @@ export const getVideos = async (
     } as Partial<Prisma.VideoFindManyArgs>;
 
     if (options.take) data.take = options.take;
+    if (options.userId) data.where = { id: `${options.userId}` };
     const res = (await prisma.video.findMany(data)) as (Video & { author: User })[];
     return res;
 

@@ -42,12 +42,7 @@ const NavBar = ({ profileSrc }: { profileSrc?: string }) => {
                 <div className="flex items-center md:order-2">
                     {profileSrc && (
                         <Link href="/settings">
-                            <img
-                                alt="profilePic"
-                                className="w-10 h-10 rounded-full"
-                                src={profileSrc}
-                                alt="user photo"
-                            />
+                            <img alt="profilePic" className="w-10 h-10 rounded-full cursor-pointer" src={profileSrc} />
                         </Link>
                     )}
 
