@@ -49,15 +49,11 @@ interface ExtendedRequest {
 
 const router = createRouter<NextApiRequest & ExtendedRequest, NextApiResponse>();
 
-router.use(fileParser).post(async (req, res) => {
-    if (req.method !== 'POST') {
-        return res.status(501).end();
-    }
-
+router.use(fileParser).put(async (req, res) => {
     const session = await getSession({ req });
 
     if (!session) return res.status(401).json({ message: 'Not logged in' });
-
+    console.log('UPLOADING');
     const user = await prisma.user.findUnique({
         where: {
             id: session.user.id,
@@ -66,28 +62,30 @@ router.use(fileParser).post(async (req, res) => {
 
     if (!user) return res.status(401).json({ message: 'User not found' });
 
-    if (req.method === 'POST') {
-        // CHECK IF AN IMAGE WAS UPLOADED
-        if (req?.files && req.files.image[0] && req.files.image[0].size > 0) {
-            const fileLocation = await uploadFile(
-                req.files.image[0].path,
-                req.files.image[0].originalFilename,
-                +session.user.id
-            );
+    console.log(`USERID: ${session.user.id}`);
+    console.log(req.files);
 
-            await prisma.user.update({
-                where: { id: session.user.id },
-                data: {
-                    image: fileLocation,
-                },
-            });
-        }
+    // CHECK IF AN IMAGE WAS UPLOADED
+    if (req?.files && req.files.image[0] && req.files.image[0].size > 0) {
+        const fileLocation = await uploadFile(
+            req.files.image[0].path,
+            req.files.image[0].originalFilename,
+            +session.user.id
+        );
 
-        res.json({ success: true });
+        console.log(`FILE LOCATION: ${fileLocation}`);
+        await prisma.user.update({
+            where: { id: session.user.id },
+            data: {
+                image: fileLocation,
+            },
+        });
     }
+
+    res.json({ success: true });
 });
 
-export default router.handler({
+const handler = router.handler({
     onError: (err, req: NextApiRequest, res: NextApiResponse) => {
         res.status(500).end({ success: false });
     },
@@ -95,3 +93,5 @@ export default router.handler({
         res.status(404).end({ success: false });
     },
 });
+
+export default handler;

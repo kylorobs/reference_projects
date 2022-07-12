@@ -13,12 +13,29 @@ import UploadAvatar from '../components/forms/UploadAvatar';
 export default function Settings() {
     const { data: session, status } = useSession();
     const [visibleModal, setVisibleModal] = useState(false);
-    // const router = useRouter();
+    const [image, setImage] = useState<Blob | string>('');
+    const [imageUrl, setImageUrl] = useState('');
+    const router = useRouter();
     // if (!session) router.push('/');
 
-    const handleAvatarUpload = (e: SyntheticEvent) => {
+    const handleAvatarUpload = async (e: SyntheticEvent) => {
         e.preventDefault();
         console.log('upload image');
+        if (!image) {
+            alert('Enter some text in the post');
+            return;
+        }
+
+        const body = new FormData();
+        body.append('image', image);
+
+        const res = await fetch('/api/user', {
+            body,
+            method: 'PUT',
+        });
+
+        console.log('REDIRECTING');
+        // router.push(`/`);
     };
     return (
         <div className="relative">
@@ -41,8 +58,9 @@ export default function Settings() {
                 </div>
 
                 <Popup heading="Upload an Avatar" show={visibleModal} close={() => setVisibleModal(false)}>
-                    <UploadAvatar submit={handleAvatarUpload} />
+                    <UploadAvatar submit={handleAvatarUpload} setFileUrl={setImageUrl} setFile={setImage} />
                 </Popup>
+                <img alt="" src={imageUrl} />
             </main>
         </div>
     );
