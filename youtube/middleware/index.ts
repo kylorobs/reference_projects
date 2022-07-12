@@ -1,36 +1,30 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import nextConnect from 'next-connect';
 import multiparty from 'multiparty';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { NextHandler } from 'next-connect';
 
-const fileParser = async (req: NextApiRequest, res: NextApiResponse, next: NextHandler) => {
-    console.log('PARSING FORM');
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const middleware = nextConnect();
+
+middleware.use(async (req: NextApiRequest & { files: string }, res: NextApiResponse, next) => {
     const form = new multiparty.Form();
-    const reqWithFiles = req as NextApiRequest & { files: string };
-    form.on('progress', (bytesReceived, bytesExpected) => {
-        var percentComplete = (bytesReceived / bytesExpected) * 100;
-        console.log(`the form is ${Math.floor(percentComplete)}% complete`);
-    });
+    console.log('PARSING');
 
-    console.log(req);
-
-    const parsing = () => {
+    const parse = () => {
         return new Promise((resolve, reject) => {
             form.parse(req, (_err, fields, files) => {
-                console.log({ error: _err });
-
+                console.log(_err);
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                reqWithFiles.body = fields;
-                console.log('FIELDS');
-                console.log(fields);
-                console.log(files);
+                req.body = fields;
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                reqWithFiles.files = files;
-                resolve('parsed');
+                req.files = files;
+                resolve('success');
             });
         });
     };
-    await parsing();
-    await next();
-};
+    await parse();
+    next();
+});
 
-export default fileParser;
+export default middleware;

@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
-import { createRouter } from 'next-connect';
 import S3 from 'aws-sdk/clients/s3';
 import type { PutObjectRequest } from 'aws-sdk/clients/s3';
 import fs from 'fs';
 import path from 'path';
-import fileParser from '../../middleware';
+import nextConnect from 'next-connect';
 import { prisma } from '../../lib/prisma';
+import middleware from '../../middleware';
 
 // DOCS
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/s3clientconfig.html#bucketendpoint
@@ -47,9 +47,12 @@ interface ExtendedRequest {
     };
 }
 
-const router = createRouter<NextApiRequest & ExtendedRequest, NextApiResponse>();
+// USING OLD VERSION OF NEXT CONNECT
 
-router.use(fileParser).put(async (req, res) => {
+const handler = nextConnect<NextApiRequest, NextApiResponse>();
+handler.use(middleware);
+
+handler.put<ExtendedRequest>(async (req, res) => {
     const session = await getSession({ req });
 
     if (!session) return res.status(401).json({ message: 'Not logged in' });
@@ -85,13 +88,10 @@ router.use(fileParser).put(async (req, res) => {
     res.json({ success: true });
 });
 
-const handler = router.handler({
-    onError: (err, req: NextApiRequest, res: NextApiResponse) => {
-        res.status(500).end({ success: false });
+export const config = {
+    api: {
+        bodyParser: false,
     },
-    onNoMatch: (req, res) => {
-        res.status(404).end({ success: false });
-    },
-});
+};
 
 export default handler;

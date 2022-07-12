@@ -11,7 +11,7 @@ const UploadAvatar = ({
     setFileUrl: (str: string) => void;
 }) => {
     return (
-        <form className="flex flex-col gap-4" onSubmit={submit}>
+        <form className="flex flex-col gap-4" onSubmit={submit} encType="multipart/form-data">
             <div id="fileUpload">
                 <div className="mb-2 block">
                     <Label htmlFor="file" value="Upload file" />
