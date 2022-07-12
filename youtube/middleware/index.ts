@@ -15,15 +15,15 @@ const fileParser = async (req: NextApiRequest, res: NextApiResponse, next: NextH
             form.parse(req, (_err, fields, files) => {
                 console.log(_err);
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                req.body = fields;
+                reqWithFiles.body = fields;
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                req.files = files;
+                reqWithFiles.files = files;
                 resolve('success');
             });
         });
     };
-    await parsing();
+    await parse();
     next();
 };
 
-export default middleware;
+export default fileParser;
