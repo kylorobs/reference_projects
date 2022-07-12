@@ -25,7 +25,7 @@ const fileParser = async (req: NextApiRequest, res: NextApiResponse, next: NextH
         });
     };
     await parsing();
-    await next();
+    next();
 };
 
 export default fileParser;

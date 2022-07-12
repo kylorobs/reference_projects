@@ -29,7 +29,6 @@ const uploadFile = (filePath: fs.PathOrFileDescriptor, fileName: string, id: num
             if (err) {
                 reject(err);
             }
-            console.log(data.Location);
             resolve(data.Location);
         });
     });
@@ -93,5 +92,11 @@ const handler = router.handler({
         res.status(404).end({ success: false });
     },
 });
+
+export const config = {
+    api: {
+        bodyParser: false,
+    },
+};
 
 export default handler;
