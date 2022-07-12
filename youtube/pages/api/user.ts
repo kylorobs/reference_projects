@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
+import { createRouter } from 'next-connect';
 import S3 from 'aws-sdk/clients/s3';
 import type { PutObjectRequest } from 'aws-sdk/clients/s3';
 import fs from 'fs';
 import path from 'path';
-import nextConnect from 'next-connect';
+import fileParser from '../../middleware';
 import { prisma } from '../../lib/prisma';
-import middleware from '../../middleware';
 
 // DOCS
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/s3clientconfig.html#bucketendpoint
@@ -46,12 +46,9 @@ interface ExtendedRequest {
     };
 }
 
-// USING OLD VERSION OF NEXT CONNECT
+const router = createRouter<NextApiRequest & ExtendedRequest, NextApiResponse>();
 
-const handler = nextConnect<NextApiRequest, NextApiResponse>();
-handler.use(middleware);
-
-handler.put<ExtendedRequest>(async (req, res) => {
+router.use(fileParser).put(async (req, res) => {
     const session = await getSession({ req });
 
     if (!session) return res.status(401).json({ message: 'Not logged in' });
@@ -63,9 +60,6 @@ handler.put<ExtendedRequest>(async (req, res) => {
     });
 
     if (!user) return res.status(401).json({ message: 'User not found' });
-
-    console.log(`USERID: ${session.user.id}`);
-    console.log(req.files);
 
     // CHECK IF AN IMAGE WAS UPLOADED
     if (req?.files && req.files.image[0] && req.files.image[0].size > 0) {
@@ -85,6 +79,15 @@ handler.put<ExtendedRequest>(async (req, res) => {
     }
 
     res.json({ success: true });
+});
+
+const handler = router.handler({
+    onError: (err, req: NextApiRequest, res: NextApiResponse) => {
+        res.status(500).end({ success: false });
+    },
+    onNoMatch: (req, res) => {
+        res.status(404).end({ success: false });
+    },
 });
 
 export const config = {
