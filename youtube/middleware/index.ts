@@ -6,11 +6,6 @@ const fileParser = async (req: NextApiRequest, res: NextApiResponse, next: NextH
     console.log('PARSING FORM');
     const form = new multiparty.Form();
     const reqWithFiles = req as NextApiRequest & { files: string };
-    form.on('progress', (bytesReceived, bytesExpected) => {
-        var percentComplete = (bytesReceived / bytesExpected) * 100;
-        console.log(`the form is ${Math.floor(percentComplete)}% complete`);
-    });
-
     console.log(req);
 
     const parsing = () => {
