@@ -4,12 +4,11 @@ import nextConnect from 'next-connect';
 import multiparty from 'multiparty';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const middleware = nextConnect();
-
-middleware.use(async (req: NextApiRequest & { files: string }, res: NextApiResponse, next) => {
+const fileParser = async (req: NextApiRequest, res: NextApiResponse, next: NextHandler) => {
+    console.log('PARSING FORM');
     const form = new multiparty.Form();
-    console.log('PARSING');
+    const reqWithFiles = req as NextApiRequest & { files: string };
+    console.log(req);
 
     const parse = () => {
         return new Promise((resolve, reject) => {
@@ -23,8 +22,8 @@ middleware.use(async (req: NextApiRequest & { files: string }, res: NextApiRespo
             });
         });
     };
-    await parse();
+    await parsing();
     next();
-});
+};
 
 export default middleware;

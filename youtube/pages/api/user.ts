@@ -29,7 +29,6 @@ const uploadFile = (filePath: fs.PathOrFileDescriptor, fileName: string, id: num
             if (err) {
                 reject(err);
             }
-            console.log(data.Location);
             resolve(data.Location);
         });
     });
@@ -87,6 +86,12 @@ handler.put<ExtendedRequest>(async (req, res) => {
 
     res.json({ success: true });
 });
+
+export const config = {
+    api: {
+        bodyParser: false,
+    },
+};
 
 export const config = {
     api: {
