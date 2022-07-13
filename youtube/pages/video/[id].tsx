@@ -2,7 +2,7 @@ import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Head from 'next/head';
-import { getVideo, getVideos } from '../../lib/data';
+import { getSubscribersCount, getVideo, getVideos } from '../../lib/data';
 import { prisma } from '../../lib/prisma';
 import type { VideoT, VideoArr } from '../../types';
 import Video from '../../components/Video';
@@ -10,7 +10,15 @@ import NavBar from '../../components/NavBar';
 
 const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: false });
 
-export default function SingleVideo({ video, videos }: { video: VideoT; videos: VideoArr }) {
+export default function SingleVideo({
+    video,
+    videos,
+    subscribers,
+}: {
+    video: VideoT;
+    videos: VideoArr;
+    subscribers: number;
+}) {
     if (!video) return <p className="text-center p-5">Video does not exist 😞</p>;
 
     return (
@@ -21,6 +29,21 @@ export default function SingleVideo({ video, videos }: { video: VideoT; videos: 
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <NavBar />
+            <div className=" dark:bg-slate-800 h-full my-0 p-4">
+                <div className="flex p-2">
+                    <div className="pr-4">
+                        <div className="w-20">
+                            <img className="rounded-full" alt="logo" src={video.author.image} />
+                        </div>
+                    </div>
+                    <div>
+                        <p className="text-lg text-gray-400">{video.author.name}</p>
+                        <p className="text-lg text-gray-400">
+                            <div>{subscribers} subscribers</div>
+                        </p>
+                    </div>
+                </div>
+            </div>
             <div className="h-screen flex dark:bg-slate-800 h-full">
                 <div className="flex w-full flex-col mb-4 border-t border-r border-b border-3 border-black pl-0 bg-gray-900">
                     <div className="relative pt-[60%]">
@@ -41,17 +64,6 @@ export default function SingleVideo({ video, videos }: { video: VideoT; videos: 
 
                                 <div className="text-gray-400">{video.views} views · </div>
                             </div>
-                        </div>
-
-                        <div className="flex justify-between border-t border-gray-500 mt-5 pt-5">
-                            <Link href={`/channel/${video.author.username || ''}`}>
-                                <a className=" flex ">
-                                    {video.author.image && (
-                                        <img className="w-16 h-16 mt-2 mr-2 rounded-full" src={video.author.image} />
-                                    )}
-                                    <span className="mt-6 ml-2 text-xl text-white">{video.author.name}</span>
-                                </a>
-                            </Link>
                         </div>
                     </div>
                 </div>
@@ -78,10 +90,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     let videos = await getVideos({ take: 3 }, prisma);
     videos = JSON.parse(JSON.stringify(videos)) as VideoArr;
 
+    const subscriberCount = await getSubscribersCount(video.authorId, prisma);
+
     return {
         props: {
             video,
             videos,
+            subscribers: subscriberCount,
         },
     };
 };

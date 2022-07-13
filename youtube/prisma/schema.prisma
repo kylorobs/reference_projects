@@ -13,14 +13,14 @@ datasource db {
 model User {
   id            String    @id @default(cuid())
   name          String?
-  username      String?
+  username      String?   @unique
   email         String?   @unique
   emailVerified DateTime?
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  subscribers   User[]    @relation("Subscribers", references: [id])
-  subscribedTo  User[]    @relation("Subscribers", references: [id])
+  subscribers   User[]    @relation("Subscribers")
+  subscribedTo  User[]    @relation("Subscribers")
   accounts      Account[]
   sessions      Session[]
   Video         Video[]
