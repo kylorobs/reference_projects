@@ -1,18 +1,21 @@
 import type { PrismaClient, User, Prisma, Video } from '@prisma/client';
 import { paginationAmount } from './config';
 
-type Channel = User & { subscribers: User[]; username: string };
+export type Channel = User & { subscribers: User[]; username: string };
 
 export const getUser = async (id: string, prisma: PrismaClient): Promise<User | null> => {
     return prisma.user.findUnique({
         where: {
             id,
         },
+        include: {
+            subscribers: true,
+        },
     });
 };
 
 export const getVideos = async (
-    options: { take?: number; userId?: number | string; skip?: number },
+    options: { take?: number; userId?: string; skip?: number },
     prisma: PrismaClient
 ): Promise<(Video & { author: User })[]> => {
     const data = {
@@ -27,9 +30,11 @@ export const getVideos = async (
         },
     } as Partial<Prisma.VideoFindManyArgs>;
 
+    console.log(options);
+
     data.take = options.take || paginationAmount;
     if (options.skip) data.skip = options.skip;
-    if (options.userId) data.where = { id: `${options.userId}` };
+    if (options.userId) data.where = { authorId: options.userId };
     const res = (await prisma.video.findMany(data)) as (Video & { author: User })[];
     return res;
 

@@ -1,1 +1,1 @@
-export const paginationAmount = 3;
+export const paginationAmount = 8;

@@ -14,10 +14,12 @@ export default function SingleVideo({
     video,
     videos,
     subscribers,
+    videoAuthorId,
 }: {
     video: VideoT;
     videos: VideoArr;
     subscribers: number;
+    videoAuthorId: string | number;
 }) {
     if (!video) return <p className="text-center p-5">Video does not exist 😞</p>;
 
@@ -33,7 +35,9 @@ export default function SingleVideo({
                 <div className="flex p-2">
                     <div className="pr-4">
                         <div className="w-20">
-                            <img className="rounded-full" alt="logo" src={video.author.image} />
+                            <Link href={`/channel/${videoAuthorId}`}>
+                                <img className="rounded-full" alt="logo" src={video.author.image} />
+                            </Link>
                         </div>
                     </div>
                     <div>
@@ -96,6 +100,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         props: {
             video,
             videos,
+            videoAuthorId: video.authorId,
             subscribers: subscriberCount,
         },
     };
