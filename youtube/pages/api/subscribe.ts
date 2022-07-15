@@ -12,12 +12,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const session = await getSession({ req });
 
     if (!session) return res.status(401).json({ message: 'Not logged in' });
-    console.log('UPLOADING');
-    const user = await prisma.user.findUnique({
-        where: {
-            id: session.user.id,
-        },
-    });
 
     const userToSubscribeTo = await prisma.user.findUnique({
         where: {
@@ -31,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     await prisma.user.update({
         where: {
-            id: channelId,
+            id: session.user.id,
         },
         data: {
             subscribedTo: {

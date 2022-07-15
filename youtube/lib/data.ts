@@ -2,6 +2,7 @@ import type { PrismaClient, User, Prisma, Video } from '@prisma/client';
 import { paginationAmount } from './config';
 
 export type Channel = User & { subscribers: User[]; username: string };
+export type VideoWithLikes = Video & { likes: User[] };
 
 export const getUser = async (id: string, prisma: PrismaClient): Promise<User | null> => {
     return prisma.user.findUnique({
@@ -64,6 +65,33 @@ export const getVideo = async (id: string, prisma: PrismaClient) => {
     });
 
     return video;
+};
+
+export const getVideoLikes = async (id: string, prisma: PrismaClient) => {
+    const video = (await prisma.video.findUnique({
+        where: {
+            id,
+        },
+        include: {
+            likes: true,
+        },
+    })) as VideoWithLikes;
+
+    return video?.likes.length || 0;
+};
+
+export const checkIfVideoIsLiked = async (videoId: string, id: string | undefined, prisma: PrismaClient) => {
+    if (!id) return false;
+    const video = (await prisma.video.findUnique({
+        where: {
+            id: videoId,
+        },
+        include: {
+            likes: true,
+        },
+    })) as VideoWithLikes;
+
+    return !!video?.likes.find((user) => user.id === id);
 };
 
 export const getSubscribersCount = async (id: string, prisma: PrismaClient) => {

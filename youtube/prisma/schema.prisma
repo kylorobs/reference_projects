@@ -24,6 +24,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   Video         Video[]
+  likedVideos   Video[]   @relation("Likes")
+  videoId       String?
 }
 
 model VerificationToken {
@@ -69,6 +71,7 @@ model Video {
   url        String
   thumbnail  String
   views      Int      @default(0)
+  likes      User[]   @relation("Likes")
   length     Int      @default(0)
   visibility String
   createdAt  DateTime @default(now())
